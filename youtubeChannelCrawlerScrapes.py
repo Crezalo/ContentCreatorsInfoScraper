@@ -204,6 +204,6 @@ class channelCrawler:
             return []
 
 print("sdsdsd")
-Parallel(n_jobs=2)(delayed(channelCrawler)(i) for i in range(15))
+Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
 # my_bot = channelCrawler(1)
 # my_bot.build_name_and_Couple_Database()
