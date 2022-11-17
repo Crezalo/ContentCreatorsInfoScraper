@@ -1,0 +1,5 @@
+black==22.8.0
+joblib==1.1.1
+selenium==4.6.0
+stem==1.8.1
+tbselenium==0.5.3
