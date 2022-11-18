@@ -5,6 +5,8 @@ from collections import defaultdict
 from selenium.webdriver.common.action_chains import ActionChains as ac
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 from joblib import Parallel, delayed
 from stem.control import Controller
 from stem import Signal
@@ -57,7 +59,7 @@ class channelCrawler:
             "Travel&Events",
         ]
         with open(
-            "youtubeChannelData_" + self.categories[category_ind + 1] + ".tsv",
+            "youtubeChannelData_" + self.categories[category_ind] + ".tsv",
             "w",
             encoding="utf-8",
         ) as file:
@@ -77,7 +79,10 @@ class channelCrawler:
 
     def searchQuery(self, category, minsub, maxsub, file):
         print("sdsdsd")
-        driver = webdriver.Chrome(options=self.chrome_options)
+        driver = webdriver.Chrome(
+            service=ChromeService(ChromeDriverManager().install()),
+            options=self.chrome_options,
+        )
         driver.delete_all_cookies()
         driver.get("https://channelcrawler.com/eng")
 
@@ -88,68 +93,80 @@ class channelCrawler:
 
         driver.maximize_window()
         # Category
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[1]/div/span/input"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[1]/div/span/input",
         ).click()
         sleep(0.1)
         # Auto & Vehicle (1-15)
-        driver.find_element("xpath", 
+        driver.find_element(
+            "xpath",
             "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[2]/ul/li["
             + str(category)
-            + "]"
+            + "]",
         ).click()
         sleep(0.1)
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
         ).click()
         sleep(0.1)
         # Country
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/span/input"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/span/input",
         ).click()
         sleep(0.1)
         # India
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[2]/ul/li[103]"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[2]/ul/li[103]",
         ).click()
         sleep(0.1)
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
         ).click()
         sleep(0.1)
         # Min Subscribers
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select",
         ).click()
         sleep(0.1)
         # 1000 (1-17)
-        driver.find_element("xpath", 
+        driver.find_element(
+            "xpath",
             "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select/option["
             + str(minsub)
-            + "]"
+            + "]",
         ).click()
         sleep(0.1)
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
         ).click()
         # Max Subscribers
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select",
         ).click()
         sleep(0.1)
         # 2000 (1-17)
-        driver.find_element("xpath", 
+        driver.find_element(
+            "xpath",
             "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select/option["
             + str(maxsub)
-            + "]"
+            + "]",
         ).click()
         sleep(0.1)
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label"
+        driver.find_element(
+            "xpath",
+            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
         ).click()
         sleep(0.1)
-        driver.find_element("xpath", 
-            "/html/body/div[1]/div[3]/div/form/div[3]/div/button"
+        driver.find_element(
+            "xpath", "/html/body/div[1]/div[3]/div/form/div[3]/div/button"
         ).click()
         sleep(0.1)
 
@@ -202,6 +219,7 @@ class channelCrawler:
             ]
         except Exception as e:
             return []
+
 
 print("sdsdsd")
 Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))

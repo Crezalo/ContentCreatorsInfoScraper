@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 import os
 import time
 from stem.control import Controller
@@ -27,7 +29,7 @@ print("reached")
 options = Options()
 options.add_argument("--proxy-server=%s" % PROXY)
 for i in range(50):
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=options)
     driver.get("http://www.icanhazip.com")
 
     with Controller.from_port(port=9051) as controller:
