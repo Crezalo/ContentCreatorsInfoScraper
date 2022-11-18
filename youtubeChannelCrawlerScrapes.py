@@ -7,7 +7,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
+import multiprocessing as mp
 from stem.control import Controller
 from stem import Signal
 from stem import process
@@ -38,7 +39,7 @@ class channelCrawler:
         self.chrome_options.add_argument("--disable-gpu")
         self.chrome_options.add_argument("--no-sandbox")  # linux only
         self.chrome_options.add_argument("--proxy-server=%s" % PROXY)
-        # self.chrome_options.add_argument("--headless")
+        self.chrome_options.add_argument("--headless")
         # chrome_options.headless = True # also works
         sleep(0.1)
         self.categories = [
@@ -222,6 +223,8 @@ class channelCrawler:
 
 
 print("sdsdsd")
-Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
+with mp.Pool(mp.cpu_count()) as pool:
+    out = pool.map(channelCrawler,[i for i in range(15)])
+# Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
 # my_bot = channelCrawler(1)
 # my_bot.build_name_and_Couple_Database()
