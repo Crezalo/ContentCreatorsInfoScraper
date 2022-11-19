@@ -73,7 +73,7 @@ class channelCrawler:
             for k in range(j, 18):
                 self.searchQuery(i, j, k, f)
                 print("Percent completion: " + str((j * k - j + k) * 100 / 153) + " %")
-                print("Category: " + self.categories[i])
+                print("Category: " + self.categories[i-1])
                 print("Min No. : " + str(j))
                 print("Max No.: " + str(k))
         return
