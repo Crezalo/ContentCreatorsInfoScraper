@@ -61,7 +61,7 @@ class channelCrawler:
         ]
         with open(
             "youtubeChannelData_" + self.categories[category_ind] + ".tsv",
-            "w",
+            "a",
             encoding="utf-8",
         ) as file:
             self.searchByCategory(category_ind + 1, file)
