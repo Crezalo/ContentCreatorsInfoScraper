@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+
 # from joblib import Parallel, delayed
 import multiprocessing as mp
 from stem.control import Controller
@@ -71,9 +72,15 @@ class channelCrawler:
     def searchByCategory(self, i, f):
         for j in range(1, 18):
             for k in range(j, 18):
-                self.searchQuery(i, j, k, f)
+                try:
+                    self.searchQuery(i, j, k, f)
+                except Exception as e:
+                    try:
+                        self.searchQuery(i, j, k, f)
+                    except Exception as e:
+                        self.searchQuery(i, j, k, f)
                 print("Percent completion: " + str((j * k - j + k) * 100 / 153) + " %")
-                print("Category: " + self.categories[i-1])
+                print("Category: " + self.categories[i - 1])
                 print("Min No. : " + str(j))
                 print("Max No.: " + str(k))
         return
@@ -223,8 +230,10 @@ class channelCrawler:
 
 
 print("sdsdsd")
-with mp.Pool(mp.cpu_count()) as pool:
-    out = pool.map(channelCrawler,[i for i in range(15)])
+for i in range(15):
+    my_bot = channelCrawler(i)
+# with mp.Pool(mp.cpu_count()) as pool:
+#     out = pool.map(channelCrawler, [i for i in range(15)])
 # Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
 # my_bot = channelCrawler(1)
 # my_bot.build_name_and_Couple_Database()
