@@ -17,9 +17,7 @@ from stem import process
 # To use Tor's SOCKS proxy server with chrome, include the socks protocol in the scheme with the --proxy-server option
 # PROXY = "socks5://127.0.0.1:9150" # IP:PORT or HOST:PORT
 try:
-    print("sdsdsd")
     os.system("sudo fuser -k 9050/tcp")
-    print("sdsdsd")
     tor_launcher = process.launch_tor_with_config(
         config={
             "ControlPort": "9051",
@@ -72,132 +70,134 @@ class channelCrawler:
     def searchByCategory(self, i, f):
         for j in range(1, 18):
             for k in range(j, 18):
-                try:
-                    self.searchQuery(i, j, k, f)
-                except Exception as e:
-                    try:
-                        self.searchQuery(i, j, k, f)
-                    except Exception as e:
-                        self.searchQuery(i, j, k, f)
-                print("Percent completion: " + str((j * k - j + k) * 100 / 153) + " %")
-                print("Category: " + self.categories[i - 1])
-                print("Min No. : " + str(j))
-                print("Max No.: " + str(k))
+                attempt = 1
+                while not self.searchQuery(i, j, k, f):
+                    print("Attempt " + str(attempt) + " failed, retrying...")
+                    attempt += 1
         return
 
     def searchQuery(self, category, minsub, maxsub, file):
-        print("sdsdsd")
-        driver = webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install()),
-            options=self.chrome_options,
-        )
-        driver.delete_all_cookies()
-        driver.get("https://channelcrawler.com/eng")
+        try:
+            driver = webdriver.Chrome(
+                service=ChromeService(ChromeDriverManager().install()),
+                options=self.chrome_options,
+            )
+            driver.delete_all_cookies()
+            driver.get("https://channelcrawler.com/eng")
 
-        with Controller.from_port(port=9051) as controller:
-            controller.authenticate()
-            # print("successful authenticate")
-            controller.signal(Signal.NEWNYM)
+            with Controller.from_port(port=9051) as controller:
+                controller.authenticate()
+                # print("successful authenticate")
+                controller.signal(Signal.NEWNYM)
 
-        driver.maximize_window()
-        # Category
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[1]/div/span/input",
-        ).click()
-        sleep(0.1)
-        # Auto & Vehicle (1-15)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[2]/ul/li["
-            + str(category)
-            + "]",
-        ).click()
-        sleep(0.1)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
-        ).click()
-        sleep(0.1)
-        # Country
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/span/input",
-        ).click()
-        sleep(0.1)
-        # India
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[2]/ul/li[103]",
-        ).click()
-        sleep(0.1)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
-        ).click()
-        sleep(0.1)
-        # Min Subscribers
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select",
-        ).click()
-        sleep(0.1)
-        # 1000 (1-17)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select/option["
-            + str(minsub)
-            + "]",
-        ).click()
-        sleep(0.1)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
-        ).click()
-        # Max Subscribers
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select",
-        ).click()
-        sleep(0.1)
-        # 2000 (1-17)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select/option["
-            + str(maxsub)
-            + "]",
-        ).click()
-        sleep(0.1)
-        driver.find_element(
-            "xpath",
-            "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
-        ).click()
-        sleep(0.1)
-        driver.find_element(
-            "xpath", "/html/body/div[1]/div[3]/div/form/div[3]/div/button"
-        ).click()
-        sleep(0.1)
+            driver.maximize_window()
+            # Category
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[1]/div/span/input",
+            ).click()
+            sleep(0.1)
+            # Auto & Vehicle (1-15)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/div/div/div[2]/ul/li["
+                + str(category)
+                + "]",
+            ).click()
+            sleep(0.1)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
+            ).click()
+            sleep(0.1)
+            # Country
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/span/input",
+            ).click()
+            sleep(0.1)
+            # India
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[2]/ul/li[103]",
+            ).click()
+            sleep(0.1)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
+            ).click()
+            sleep(0.1)
+            # Min Subscribers
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select",
+            ).click()
+            sleep(0.1)
+            # 1000 (1-17)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select/option["
+                + str(minsub)
+                + "]",
+            ).click()
+            sleep(0.1)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
+            ).click()
+            # Max Subscribers
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select",
+            ).click()
+            sleep(0.1)
+            # 2000 (1-17)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[2]/div/select/option["
+                + str(maxsub)
+                + "]",
+            ).click()
+            sleep(0.1)
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[2]/label",
+            ).click()
+            sleep(0.1)
+            driver.find_element(
+                "xpath", "/html/body/div[1]/div[3]/div/form/div[3]/div/button"
+            ).click()
+            sleep(0.1)
 
-        data = []
+            data = []
 
-        mainUrl = driver.current_url
+            mainUrl = driver.current_url
 
-        for j in range(5):
-            for i in range(20):
-                temp = self.channelInfo(
-                    driver,
-                    "/html/body/div[1]/div[1]/div/div[2]/div[" + str(i + 1) + "]",
-                )
-                if temp != []:
-                    data.append("\t".join(temp))
-            driver.get(mainUrl + "/page:" + str(j + 2))
+            for j in range(5):
+                for i in range(20):
+                    temp = self.channelInfo(
+                        driver,
+                        "/html/body/div[1]/div[1]/div/div[2]/div[" + str(i + 1) + "]",
+                    )
+                    if temp != []:
+                        data.append("\t".join(temp))
+                driver.get(mainUrl + "/page:" + str(j + 2))
 
-        data = list(set(data))
+            data = list(set(data))
 
-        for x in data:
-            file.write(x + "\n")
+            for x in data:
+                file.write(x + "\n")
 
-        driver.quit()
+            driver.quit()
+            print("Percent completion: " + str((minsub * maxsub - minsub + maxsub) * 100 / 153) + " %")
+            print("Category: " + self.categories[category - 1])
+            print("Min No. : " + str(minsub))
+            print("Max No.: " + str(maxsub))
+            return True
+
+        except Exception as e:
+            print(str(e))
+            return False
 
     def channelInfo(self, driver, path):
         try:
@@ -229,11 +229,10 @@ class channelCrawler:
             return []
 
 
-print("sdsdsd")
-for i in range(15):
-    my_bot = channelCrawler(i)
-# with mp.Pool(mp.cpu_count()) as pool:
-#     out = pool.map(channelCrawler, [i for i in range(15)])
+# for i in range(15):
+#     my_bot = channelCrawler(i)
+with mp.Pool(mp.cpu_count()) as pool:
+    out = pool.map(channelCrawler, [i for i in range(15)])
 # Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
 # my_bot = channelCrawler(1)
 # my_bot.build_name_and_Couple_Database()
