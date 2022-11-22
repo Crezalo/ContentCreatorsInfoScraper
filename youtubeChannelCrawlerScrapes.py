@@ -42,21 +42,21 @@ class channelCrawler:
         # chrome_options.headless = True # also works
         sleep(0.1)
         self.categories = [
-            "Autos&Vehicles",
+            "AutosVehicles",
             "Comedy",
             "Education",
             "Entertainment",
-            "Film&Animation",
+            "FilmAnimation",
             "Gaming",
-            "Howto&Style",
+            "HowtoStyle",
             "Music",
-            "News&Politics",
-            "Nonprofits&Activism",
-            "People&Blogs",
-            "Pets&Animals",
-            "Science&Technology",
+            "NewsPolitics",
+            "NonprofitsActivism",
+            "PeopleBlogs",
+            "PetsAnimals",
+            "ScienceTechnology",
             "Sports",
-            "Travel&Events",
+            "TravelEvents",
         ]
         with open(
             "youtubeChannelData_" + self.categories[category_ind] + ".tsv",
