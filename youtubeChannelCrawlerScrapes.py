@@ -233,6 +233,20 @@ class channelCrawler:
 #     my_bot = channelCrawler(i)
 with mp.Pool(mp.cpu_count()) as pool:
     out = pool.map(channelCrawler, [i for i in range(15)])
+
+os.system("mkdir iteration_complete")
+os.system("mv *.tsv iteration_complete")
+os.system("cat iteration_complete/*.tsv > iteration_complete/joined.tsv")
+
+with open("iteration_complete/joined.tsv", "r") as f:
+    text = f.read().split("\n")
+
+print("Total Length : " + str(len(text)))
+print("Distinct Length : " + str(len(list(set(text)))))
+
+with open("iteration_complete/joined_distinct.tsv", "w") as f:
+    for x in list(set(text)):
+        f.write(x + "\n")
 # Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
 # my_bot = channelCrawler(1)
 # my_bot.build_name_and_Couple_Database()
