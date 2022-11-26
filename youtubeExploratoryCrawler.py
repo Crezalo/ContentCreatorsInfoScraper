@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium_stealth import stealth
 from webdriver_manager.chrome import ChromeDriverManager
+import multiprocessing as mp
 
 # from joblib import Parallel, delayed
 import multiprocessing as mp
@@ -35,40 +36,37 @@ except OSError:
 
 
 class exploratoryCrawler:
-    def __init__(self, file_name):
+    def __init__(self, ch, i):
+        print("starting ...")
         PROXY = "socks5://127.0.0.1:9050"  # IP:PORT or HOST:PORT
         self.chrome_options = Options()
         self.chrome_options.add_argument("--disable-extensions")
         self.chrome_options.add_argument("--disable-gpu")
         self.chrome_options.add_argument("--no-sandbox")  # linux only
         self.chrome_options.add_argument("--proxy-server=%s" % PROXY)
+        self.chrome_options.add_argument("--window-size=1920,1080")
         self.chrome_options.add_experimental_option(
             "excludeSwitches", ["enable-automation"]
         )
         self.chrome_options.add_experimental_option("useAutomationExtension", False)
-        # self.chrome_options.add_argument("--headless")
+        self.chrome_options.add_argument("--headless")
         # chrome_options.headless = True # also works
         sleep(0.1)
-        with open(
-            file_name,
-            "r",
-            encoding="utf-8",
-        ) as file:
-            text = [x.split("\t") for x in file.read().split("\n")]
-            with open("ExploredChannels.tsv", "w", encoding="utf-8") as f:
-                attempt = 1
-                for i, ch in enumerate(text):
-                    while not self.getRecommededChannels_FromRecommendedVideos(ch, f):
-                        print(
-                            "CHANNEL No. "
-                            + str(1)
-                            + " Attempt "
-                            + str(attempt)
-                            + " failed, retrying..."
-                        )
-                        attempt += 1
+        with open("ExploredChannels.tsv", "a", encoding="utf-8") as f:
+            self.iterateOverRecommendationsFunctionUntilSuccess(ch, i, f)
 
-        # self.searchQuery(1, 1, 1)
+    def iterateOverRecommendationsFunctionUntilSuccess(self, ch, i, f):
+        attempt = 1
+        while not self.getRecommededChannels_FromRecommendedVideos(ch, f):
+            print(
+                "CHANNEL No. "
+                + str(i + 1)
+                + " Attempt "
+                + str(attempt)
+                + " failed, retrying..."
+            )
+            attempt += 1
+        return
 
     def getRecommededChannels_FromRecommendedVideos(self, ch, f):
         try:
@@ -173,7 +171,8 @@ class exploratoryCrawler:
             # recommended channel from video
             ch_names = []
             i = 1
-            while len(ch_names) <= 50:
+            print("here1")
+            while len(ch_names) <= 20:
                 try:
                     temp = driver.find_element(
                         "xpath",
@@ -188,8 +187,9 @@ class exploratoryCrawler:
                     body = driver.find_element(By.CSS_SELECTOR, "body")
                     body.send_keys(Keys.PAGE_DOWN)
                 except Exception as e:
+                    # print(e)
                     break
-            print("here")
+            print("here2")
             for x in ch_names:
                 f.write(x + "\n")
             return True
@@ -198,7 +198,18 @@ class exploratoryCrawler:
             return False
 
 
-my_bot = exploratoryCrawler("youtubeChannelData_Education.tsv")
+with open(
+    "iteration1_complete/joined_distinct.tsv",
+    "r",
+    encoding="utf-8",
+) as file:
+    text = [x.split("\t") for x in file.read().split("\n")]
+    with mp.Pool(mp.cpu_count()) as pool:
+        pool.starmap(
+            exploratoryCrawler,
+            [(ch, i) for i, ch in enumerate(text)],
+        )
+
 # with mp.Pool(mp.cpu_count()) as pool:
 #     out = pool.map(channelCrawler, [i for i in range(15)])
 # Parallel(n_jobs=1)(delayed(channelCrawler)(i) for i in range(15))
