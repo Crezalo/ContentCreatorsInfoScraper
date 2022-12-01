@@ -132,6 +132,8 @@ class exploratoryCrawler:
             while not self.getIndividualChannelInfo(driver, ch, f) and attempt <= 5:
                 print("Attempt " + str(attempt) + " failed, retrying...")
                 attempt += 1
+
+            driver.quit()
             return True
         except Exception as e:
             print(e)
