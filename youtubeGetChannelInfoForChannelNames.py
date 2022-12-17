@@ -161,7 +161,7 @@ with open(
     encoding="utf-8",
 ) as file:
     text = file.read().split("\n")
-    with mp.Pool(mp.cpu_count()) as pool:
+    with mp.Pool(1) as pool:
         pool.starmap(
             channelInfoFromName,
             [(ch, i) for i, ch in enumerate(tqdm.tqdm(text))],
