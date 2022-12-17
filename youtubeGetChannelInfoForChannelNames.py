@@ -156,7 +156,7 @@ class channelInfoFromName:
             return []
 
 with open(
-    "Second_cut_explored_channels.tsv",
+    "ExploredChannels.tsv",
     "r",
     encoding="utf-8",
 ) as file:
