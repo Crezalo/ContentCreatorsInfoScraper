@@ -59,7 +59,7 @@ class channelInfoFromName:
 
     def getChannelInfo(self, ch, i, f):
         attempt = 1
-        while not self.getChannelInfoFunc(ch, f):
+        while not self.getChannelInfoFunc(ch, f) and attempt < 51:
             print(
                 "CHANNEL No. "
                 + str(i + 1)
@@ -68,6 +68,9 @@ class channelInfoFromName:
                 + " failed, retrying..."
             )
             attempt += 1
+        if attempt == 51:
+            with open("Failed_GetChannelInfo.tsv", "a", encoding="utf-8") as f2:
+                f2.write(ch + "\n")
         return
 
     def getChannelInfoFunc(self, ch, file):
@@ -98,9 +101,20 @@ class channelInfoFromName:
             # India
             driver.find_element(
                 "xpath",
-                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[2]/ul/li[103]",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[1]/div[4]/div/div/div[2]/ul/li[104]",
             ).click()
-            #Submit button
+            # Min Subscribers
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select",
+            ).click()
+            # 1000
+            driver.find_element(
+                "xpath",
+                "/html/body/div[1]/div[3]/div/form/div[2]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/select/option[6]",
+            ).click()
+
+            # Submit button
             driver.find_element(
                 "xpath", "/html/body/div[1]/div[3]/div/form/div[3]/div/button"
             ).click()
