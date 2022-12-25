@@ -137,6 +137,7 @@ class channelInfoFromName:
             return True
 
         except Exception as e:
+            driver.quit()
             print(str(e))
             return False
 
@@ -166,11 +167,13 @@ class channelInfoFromName:
                 totalVideos,
                 totalViews,
             ]
+            driver.quit()
         except Exception as e:
+            driver.quit()
             return []
 
 with open(
-    "Second_cut_explored_channels.tsv",
+    "LeftAfter_firstRoundChannelInfo.tsv",
     "r",
     encoding="utf-8",
 ) as file:
